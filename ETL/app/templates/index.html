@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="/ETL/app/marvel-icon.ico" type="image/x-icon">
+    <title>Marvel</title>
+    <style>
+        #temporal {
+            display: none;
+        }
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+
+        h1 {
+            color: #333;
+        }
+
+        p {
+            color: #666;
+        }
+    </style>
+</head>
+<script>
+    function sendHero(){
+        //Obtener el valor de la palabra
+        var word = document.getElementById("hero").value;
+        fetch('/process_hero',{
+            method: 'POST',
+            headers:{
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({hero: word})
+        })
+        .then(response => response.json())
+        .then(data=> {
+            console.log('Respuesta del servidor:', data.resultado);
+
+            //mostrar respuesta en la web
+            var serverResponse = document.getElementById("respuestaApi");
+            document.getElementById('temporal').innerHTML = JSON.stringify(data,null,2)
+            document.getElementById('respuestaMongoDB').innerText = "";
+            document.getElementById('hero').value = ""
+            serverResponse.innerText = "El/la Superhéroe " + 
+            data.nombre + " tiene:\n" + 
+            "Comics: " + data.comics + "\n"+ 
+            "Series: " + data.series + "\n" + 
+            "Historias: " + data.historias + "\n" + 
+            "Eventos: " + data.eventos + "\n"
+
+        })
+        .catch(error => {
+            console.error('Error al enviar el titulo al servidor:', error);
+        });
+    };
+
+    function saveHero(){
+        var hero = document.getElementById("temporal").innerText;
+        if (!hero) {
+            alert('No hay super hero para guardar!')
+        }else {
+            fetch('/save_hero',{
+                method: 'POST',
+                headers:{
+                'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(hero)
+            })
+            .then (response => response.text())
+            .then (data => {
+                document.getElementById('respuestaMongoDB').innerText = data;
+                document.getElementById('respuestaApi').innerText = "";
+                document.getElementById('temporal').innerText = "";
+
+            })
+            .catch (error => {
+                console.error('Error al guardar en MongoDB:', error);
+            });
+        };
+    };
+
+</script>
+
+
+<body>
+    <header>
+        <h1>Bienvenido a tu gestor de Superhéroes</h1>
+    </header>
+    <section id = "FormularioBusqueda">
+        <h2>Busca tu Superhéroe</h2>
+        <form id="buscarhero">
+            <label for="hero">Héroe:</label>
+            <input type="text" name="hero" id="hero">
+            <button type="button" onclick="sendHero()"> Buscar </button>
+        </form>
+    </section>
+
+    <section id = "RespuestasApiMongo"> 
+        <p id="respuestaApi"></p>
+        <p id="respuestaMongoDB"></p>
+        <button type="button" onclick="saveHero()"> Guardar </button>
+        <div id ="temporal"></div>
+    </section>
+
+    <section id = "listarSuperheros">
+        <h2>Ver todos mis héroes</h2>
+        <a href="{{url_for('list_heros')}}"> Gestionar mis héroes</a>
+    </section>
+
+    <footer>
+        <p>&copy; Mi pequeño proyecto de ETL con Docker-Compose</p>
+    </footer>
+</body>
+
+</html>

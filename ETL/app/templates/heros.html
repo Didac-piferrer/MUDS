@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="/ETL/app/marvel-icon.ico" type="image/x-icon">
+    <title>Mis Heroes</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+    </style>
+</head>
+<body>
+    <h1>Lista de Superhéroes</h1>
+    <table>
+        <thead>
+            <tr>
+                <th>Nombre</th>
+                <th>Descripción</th>
+                <th>Número de Comics</th>
+                <th>Número de Series</th>
+                <th>Número de Historias</th>
+                <th>Número de Eventos</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for hero in allHeros %}
+                <tr>
+                    <td>{{ hero['nombre'] }}</td>
+                    <td>{{ hero['descripcion']}}</td>
+                    <td>{{ hero['comics'] }}</td>
+                    <td>{{ hero['series'] }}</td>
+                    <td>{{ hero['historias'] }}</td>
+                    <td>{{ hero['eventos'] }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <section>
+        <h2>Buscar nuevo Superhéroe</h2>
+        <a href="{{url_for('index')}}"> Ir a la pagina principal</a>
+    </section>
+    <footer>
+        <p>&copy; Mi pequeño proyecto de ETL con Docker-Compose</p>
+    </footer>
+</body>
+</html>
